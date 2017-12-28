@@ -15,6 +15,7 @@ public class Consumer implements Runnable {
     private Connection connection;
     private Session session;
     private Destination destination;
+    private Topic topic;
     private MessageConsumer consumer;
 
     /**
@@ -35,13 +36,8 @@ public class Consumer implements Runnable {
             //Creates a new session
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-            //Specifies the destination.
-            //A queue in this case
-            //Can be a pub-sub topic as well
-            destination = session.createQueue(QUEUE_NAME);
-
-            //Creates a consumer for the above mentioned queue
-            consumer = session.createConsumer(destination);
+            //Creates a consumer for the appropriate message channel
+            consumer = createConsumer();
 
         } catch (JMSException e) { e.printStackTrace(); }
 
@@ -61,7 +57,7 @@ public class Consumer implements Runnable {
             TextMessage message;
 
             while((message = (TextMessage) consumer.receive(Config.CONSUMER_MAX_TIMEOUT)) != null) {
-                System.out.println(message.getText() + ". Received by example.Consumer: " + currentConsumerId);
+                System.out.println(message.getText() + ". Received by Consumer: " + currentConsumerId);
             }
 
             close();
@@ -77,5 +73,21 @@ public class Consumer implements Runnable {
 
         session.close();
         connection.close();
+    }
+
+    /**
+     * Sets the appropriate channel type as defined in the Config
+     */
+    private MessageConsumer createConsumer() throws  JMSException{
+
+        if (Config.CHANNEL_TYPE == 0) {
+            destination = session.createQueue(Config.QUEUE_NAME);
+            return session.createConsumer(destination);
+        }
+        else if (Config.CHANNEL_TYPE == 1) {
+            topic = session.createTopic(Config.TOPIC_NAME);
+            return session.createConsumer(topic);
+        }
+        else throw new RuntimeException("Invalid Channel Type");
     }
 }

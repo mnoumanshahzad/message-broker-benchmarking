@@ -17,6 +17,7 @@ public class Producer implements Runnable {
     private Connection connection;
     private Session session;
     private Destination destination;
+    private Topic topic;
     private MessageProducer producer;
 
     /**
@@ -37,14 +38,8 @@ public class Producer implements Runnable {
             //Creates a new session
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-            //Specifies the destination.
-            //A queue in this case
-            //Can be a pub-sub topic as well
-            destination = session.createQueue(QUEUE_NAME);
-
-            //Create a producer for the above mentioned queue
-            //and specifies not to persist messages sent by the producer
-            producer = session.createProducer(destination);
+            //Create a producer for the appropriate message channel
+            producer = createProducer();
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
         }
         catch (JMSException e) { e.printStackTrace(); }
@@ -53,6 +48,7 @@ public class Producer implements Runnable {
     /**
      * Produces the specified number of messages
      */
+    @Override
     public void run() {
 
         try {
@@ -74,7 +70,23 @@ public class Producer implements Runnable {
     }
 
     /**
-     * Generates TextMessages with a unique MESSAGE_ID and current Thread Name and ID
+     * Sets the appropriate channel type as defined in the Config
+     */
+    private MessageProducer createProducer() throws JMSException {
+
+        if (Config.CHANNEL_TYPE == 0) {
+            destination = session.createQueue(Config.QUEUE_NAME);
+            return session.createProducer(destination);
+        }
+        else if (Config.CHANNEL_TYPE == 1) {
+            topic = session.createTopic(Config.TOPIC_NAME);
+            return session.createProducer(topic);
+        }
+        else throw new RuntimeException("Invalid Channel Type");
+    }
+
+    /**
+     * Generates TextMessages with a unique MESSAGE_ID
      */
     private Message generateMessage() throws JMSException {
 

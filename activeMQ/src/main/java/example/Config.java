@@ -15,9 +15,9 @@ public class Config {
      */
     static int CHANNEL_TYPE = 1;
 
-    static int NUM_PRODUCERS = 10;
+    static int NUM_PRODUCERS = 3;
     static int MESSAGES_PER_PRODUCER = 10;
 
-    static int NUM_CONSUMERS = 2;
+    static int NUM_CONSUMERS = 10;
     static int CONSUMER_MAX_TIMEOUT = 10000;
 }

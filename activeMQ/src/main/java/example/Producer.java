@@ -39,7 +39,11 @@ public class Producer implements Runnable {
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             //Create a producer for the appropriate message channel
+            long creationStartTime = System.currentTimeMillis();
             producer = createProducer();
+            long creationEndTime =System.currentTimeMillis();
+            System.out.println("Producer Creation Delay "+ (creationEndTime-creationStartTime));
+//            Stats.producerCreationDelay.add(creationEndTime-creationStartTime);
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
         }
         catch (JMSException e) { e.printStackTrace(); }
@@ -90,7 +94,10 @@ public class Producer implements Runnable {
      */
     private Message generateMessage() throws JMSException {
 
-        String text = "Hello from producer: " + currentProducerId + ". Delivering you Message #: " + MESSAGE_ID++;
+//        String text = "Hello from producer: " + currentProducerId + ". Delivering you Message #: " + MESSAGE_ID++;
+//        String text = Long.toString(System.currentTimeMillis());
+        String text = Long.toString(System.currentTimeMillis());
+
         TextMessage message = session.createTextMessage(text);
         return message;
     }

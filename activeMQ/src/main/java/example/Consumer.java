@@ -37,7 +37,11 @@ public class Consumer implements Runnable {
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             //Creates a consumer for the appropriate message channel
+            long creationStartTime = System.currentTimeMillis();
             consumer = createConsumer();
+            long creationEndTime = System.currentTimeMillis();
+            System.out.println("Consumer Creation Delay "+ (creationEndTime-creationStartTime));
+//            Stats.consumerCreationDelay.add(creationEndTime-creationStartTime);
 
         } catch (JMSException e) { e.printStackTrace(); }
 
@@ -57,7 +61,8 @@ public class Consumer implements Runnable {
             TextMessage message;
 
             while((message = (TextMessage) consumer.receive(Config.CONSUMER_MAX_TIMEOUT)) != null) {
-                System.out.println(message.getText() + ". Received by Consumer: " + currentConsumerId);
+                System.out.println("Message : " + message.getText() + ". Received by Consumer: " + currentConsumerId
+                        + " at " + System.currentTimeMillis()+ " Delivery Delay : " + (System.currentTimeMillis() - Long.parseLong(message.getText())));
             }
 
             close();

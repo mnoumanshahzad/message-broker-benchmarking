@@ -1,50 +1,85 @@
-\documentclass[bibtotocnumbered]{scrreprt}
+\documentclass{article}
 \usepackage[english]{babel}
 \usepackage[ansinew]{inputenc}
 \usepackage[automark]{scrpage2}
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{here}
-\usepackage{url}
+\usepackage{url}		
+\usepackage{caption}
 
+\usepackage{geometry} \geometry{a4paper, top=25mm, left=30mm, right=30mm, bottom=30mm, headsep=15mm, footskip=12mm}
 
 
 \begin{document}
 
-%FÃ¼r Kopf- und FuÃŸzeile
+%Für Kopf- und Fußzeile
 \pagestyle{scrheadings}
 %Kopfzeile
-%Eckige Klammern fÃ¼r Anfangsseite
-%Geschweifte Klammern fÃ¼r "normale" Seiten
+%Eckige Klammern für Anfangsseite
+%Geschweifte Klammern für "normale" Seiten
 \chead[]{}
-%Mitte der FuÃŸzeile (Seitenzahl)
+\ohead[]{Taha, Raees, Shahzad, Hildebrandt}
+%Mitte der Fußzeile (Seitenzahl)
 \cfoot{\pagemark}
 
 
 %Hier wird die Titelseite aufgebaut
 %\begin{titlepage}
-\title{Enterprise Computing -- Exercise\\ActiveMQ and AmazonMQ}
+\title{Enterprise Systems\\--\\Cost-Effectiveness of Apache ActiveMQ and Amazon MQ}
 \author{Muhammad Taha,\\Musadiq Raees,\\Muhammad Nouman Shahzad,\\Christian Hildebrandt}
 \maketitle
 %\end{titlepage}
-%\newpage
 
- 
+\vspace{1cm}
+
+\section*{ActiveMQ and Amazon MQ}
+
+Modern software systems often are composed of many different components. Instead of being designed as one big, monolithic system nowadays software tends to be divided in many smaller, independent parts. These parts are often even written in different programming languages, depending on its task and the environment it is operating in. For coordination of and communication between these components a messaging system can be of use -- if not even necessary. Apache ActiveMQ and Amazon MQ are perfect for this job. They provide a message broker for delivering customized messages between many endpoints, written in a variety of programming languages.\\
+\\
+It is however important to mention that Amazon MQ is merely a system that is built on top of ActiveMQ. It provides the user with a higher level of abstraction while adding some degree of convenience and options for evaluation.
+
+\section*{Roadmap}
+
+What was our project plan?
+
+\section*{Cost-Effectiveness}
+
+What is cost-effectiveness with regard to ActiveMQ and Amazon MQ (for us)?\\
+\\
+"How much do I have to pay on one platform, and how much on the other?"\\
+"How much human resources can I save when using AmazonMQ?"\\
+"How much execution time can I save?"
+
+\section*{Our Benchmarks}
+
 blablabla
+
+\section*{Results}
+
+blablablabla
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 \end{document}
-
-
-
-
-
-
-
-
-
-
-

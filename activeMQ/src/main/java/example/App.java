@@ -3,6 +3,7 @@ package example;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * An example to demonstrate the two different operating modes for ActiveMQ.
  *
@@ -26,7 +27,9 @@ public class App {
 
     public static void main(String[] args) {
 
-        runParallelTasks();
+//        runParallelTasks();
+
+        JMeterTestFromCode.start();
     }
 
     /**

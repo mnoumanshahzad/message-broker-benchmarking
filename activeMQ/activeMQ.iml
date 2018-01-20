@@ -34,6 +34,7 @@
     </orderEntry>
     <orderEntry type="library" name="apache jmeter" level="project" />
     <orderEntry type="library" name="ApacheJMeter_jms" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_component:3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.activemq:activemq-core:5.7.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1" level="project" />

@@ -73,7 +73,7 @@ public class JMeterTestFromCode {
         JMSSampler p2PSampler = new JMSSampler();
         p2PSampler.setName("JMS point to point");
         p2PSampler.setQueueConnectionFactory(Config.CONNECTION_FACTORY);
-//        Argument arg[2] = new Argument();
+//        Argument arg[] = new Argument()[2];
 //
 //        arg[0].setName("queue.Q.REQ");
 //        arg[0].setValue("Example test A");

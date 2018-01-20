@@ -1,6 +1,7 @@
 package example;
 
 import org.apache.jmeter.config.Argument;
+import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.control.LoopController;
 import org.apache.jmeter.engine.StandardJMeterEngine;
 import org.apache.jmeter.protocol.http.sampler.HTTPSampler;
@@ -8,6 +9,7 @@ import org.apache.jmeter.protocol.jms.sampler.PublisherSampler;
 import org.apache.jmeter.protocol.jms.sampler.SubscriberSampler;
 import org.apache.jmeter.protocol.jms.sampler.JMSSampler;
 
+import org.apache.jmeter.*;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.samplers.Sampler;
@@ -31,7 +33,7 @@ public class JMeterTestFromCode {
         // Engine
         StandardJMeterEngine jm = new StandardJMeterEngine();
         // jmeter.properties
-        JMeterUtils.loadJMeterProperties("example/jmeter.properties");
+        JMeterUtils.loadJMeterProperties("/media/taha/D0A65441A65429EC/masters/3rdSemester/EnterpriseComputing/message-broker-benchmarking/activeMQ/src/main/java/example/jmeter.properties");
 
 
         HashTree hashTree = new HashTree();
@@ -68,22 +70,26 @@ public class JMeterTestFromCode {
         publisher.setConnectionFactory(Config.CONNECTION_FACTORY);
         publisher.setUsername(Config.USERNAME);
         publisher.setPassword(Config.PASSWORD);
+        publisher.setTextMessage("Hello message from Publisher");
 
 
         JMSSampler p2PSampler = new JMSSampler();
         p2PSampler.setName("JMS point to point");
         p2PSampler.setQueueConnectionFactory(Config.CONNECTION_FACTORY);
-//        Argument arg[] = new Argument()[2];
-//
-//        arg[0].setName("queue.Q.REQ");
-//        arg[0].setValue("Example test A");
-//        arg[1].setName("queue.Q.RPL");
-//        arg[1].setValue("Example test B");
-//        p2PSampler.setJNDIProperties(arg);
 
+        Arguments args = new Arguments();
+        args.addArgument("queue.Q.REQ","Example test A");
+        args.addArgument("queue.Q.REQ","Example test B");
 
-
-
+        p2PSampler.setJNDIProperties(args);
+        p2PSampler.setUseReqMsgIdAsCorrelId(true);
+        p2PSampler.setUseResMsgIdAsCorrelId(true);
+        p2PSampler.setTimeout("2000");
+        p2PSampler.setExpiration("0");
+        p2PSampler.setPriority("4");
+        p2PSampler.setContent("testing point to point");
+        p2PSampler.setInitialContextFactory("org.apache.activemq.jndi.ActiveMQInitialContextFactory");
+        p2PSampler.setContextProvider(Config.CONNECTION_STRING);
 //        TopicSubscriber subscriber = new TopicSubscriber() {
 //            @Override
 //            public Topic getTopic() throws JMSException {
@@ -142,10 +148,19 @@ public class JMeterTestFromCode {
         hashTree.add("testPlan", testPlan);
         hashTree.add("loopCtrl", loopCtrl);
         hashTree.add("threadGroup", threadGroup);
+        hashTree.add("publisher", publisher);
+        hashTree.add("subs", subs);
 //        hashTree.add("httpSampler", httpSampler);
+        hashTree.add("P2Psampler", p2PSampler);
 
         jm.configure(hashTree);
+        System.out.println("starts running test");
 
-        jm.run();
+
+        try {
+            jm.run();
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
 }

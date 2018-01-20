@@ -6,8 +6,11 @@ public class Config {
      * General ActiveMQ Config
      */
     static String CONNECTION_STRING = "tcp://localhost:61616";
+    static String CONNECTION_FACTORY = "ConnectionFactory";
     static String QUEUE_NAME = "EC:TEST:QUEUE";
     static String TOPIC_NAME = "EC:TEST:TOPIC";
+    static String USERNAME = "admin";
+    static String PASSWORD = "admin";
 
     /**
      * For using Point-to-Point channel, set to 0

@@ -33,6 +33,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="apache jmeter" level="project" />
+    <orderEntry type="library" name="ApacheJMeter_jms" level="project" />
     <orderEntry type="library" name="Maven: org.apache.activemq:activemq-core:5.7.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1" level="project" />
@@ -199,8 +200,8 @@
     <orderEntry type="library" name="Maven: org.exparity:hamcrest-date:2.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_java:3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_components:3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_component:3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_http:3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jmeter:jorphan:3.3" level="project" />
-    <orderEntry type="library" name="ApacheJMeter_jms" level="project" />
   </component>
 </module>

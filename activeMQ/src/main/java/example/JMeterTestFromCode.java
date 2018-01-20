@@ -1,10 +1,13 @@
 package example;
 
+import org.apache.jmeter.config.Argument;
 import org.apache.jmeter.control.LoopController;
 import org.apache.jmeter.engine.StandardJMeterEngine;
 import org.apache.jmeter.protocol.http.sampler.HTTPSampler;
 import org.apache.jmeter.protocol.jms.sampler.PublisherSampler;
 import org.apache.jmeter.protocol.jms.sampler.SubscriberSampler;
+import org.apache.jmeter.protocol.jms.sampler.JMSSampler;
+
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.samplers.Sampler;
@@ -28,7 +31,7 @@ public class JMeterTestFromCode {
         // Engine
         StandardJMeterEngine jm = new StandardJMeterEngine();
         // jmeter.properties
-        JMeterUtils.loadJMeterProperties("/media/taha/D0A65441A65429EC/masters/3rdSemester/EnterpriseComputing/message-broker-benchmarking/activeMQ/src/main/java/example/jmeter.properties");
+        JMeterUtils.loadJMeterProperties("example/jmeter.properties");
 
 
         HashTree hashTree = new HashTree();
@@ -65,6 +68,19 @@ public class JMeterTestFromCode {
         publisher.setConnectionFactory(Config.CONNECTION_FACTORY);
         publisher.setUsername(Config.USERNAME);
         publisher.setPassword(Config.PASSWORD);
+
+
+        JMSSampler p2PSampler = new JMSSampler();
+        p2PSampler.setName("JMS point to point");
+        p2PSampler.setQueueConnectionFactory(Config.CONNECTION_FACTORY);
+//        Argument arg[2] = new Argument();
+//
+//        arg[0].setName("queue.Q.REQ");
+//        arg[0].setValue("Example test A");
+//        arg[1].setName("queue.Q.RPL");
+//        arg[1].setValue("Example test B");
+//        p2PSampler.setJNDIProperties(arg);
+
 
 
 
@@ -121,12 +137,12 @@ public class JMeterTestFromCode {
         // Test plan
         TestPlan testPlan = new TestPlan("MY TEST PLAN");
         testPlan.addThreadGroup(threadGroup);
-        testPlan.
+//        testPlan.
 //      testPlan.add
         hashTree.add("testPlan", testPlan);
         hashTree.add("loopCtrl", loopCtrl);
         hashTree.add("threadGroup", threadGroup);
-        hashTree.add("httpSampler", httpSampler);
+//        hashTree.add("httpSampler", httpSampler);
 
         jm.configure(hashTree);
 

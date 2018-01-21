@@ -35,7 +35,7 @@ public class JMeterTestFromCode {
         // Engine
         StandardJMeterEngine jm = new StandardJMeterEngine();
         // jmeter.properties
-        JMeterUtils.loadJMeterProperties("/media/taha/D0A65441A65429EC/masters/3rdSemester/EnterpriseComputing/message-broker-benchmarking/activeMQ/src/main/java/example/jmeter.properties");
+        JMeterUtils.loadJMeterProperties("src/main/resources/jmeter.properties");
 
 
 
@@ -64,7 +64,9 @@ public class JMeterTestFromCode {
         SubscriberSampler subs = new SubscriberSampler();
         subs.setName("Sample Subscriber");
         subs.setProviderUrl(Config.CONNECTION_STRING);
+        subs.setJNDIIntialContextFactory("org.apache.activemq.jndi.ActiveMQInitialContextFactory");
         subs.setConnectionFactory(Config.CONNECTION_FACTORY);
+        subs.setDestination(Config.QUEUE_NAME);
         subs.setUsername(Config.USERNAME);
         subs.setPassword(Config.PASSWORD);
 
@@ -79,7 +81,9 @@ public class JMeterTestFromCode {
         PublisherSampler publisher = new PublisherSampler();
         publisher.setName("Sample Publisher");
         publisher.setProviderUrl(Config.CONNECTION_STRING);
+        publisher.setJNDIIntialContextFactory("org.apache.activemq.jndi.ActiveMQInitialContextFactory");
         publisher.setConnectionFactory(Config.CONNECTION_FACTORY);
+        publisher.setDestination(Config.QUEUE_NAME);
         publisher.setUsername(Config.USERNAME);
         publisher.setPassword(Config.PASSWORD);
         publisher.setTextMessage("Hello message from Publisher");

@@ -27,7 +27,8 @@ public class App {
 
     public static void main(String[] args) {
 
-//        runParallelTasks();
+
+    //  runParallelTasks();
 
         JMeterTestFromCode.start();
     }

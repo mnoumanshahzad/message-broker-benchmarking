@@ -5,6 +5,8 @@ import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.control.LoopController;
 import org.apache.jmeter.engine.StandardJMeterEngine;
 import org.apache.jmeter.protocol.http.sampler.HTTPSampler;
+import org.apache.jmeter.protocol.jms.client.Publisher;
+import org.apache.jmeter.protocol.jms.client.ClientPool;
 import org.apache.jmeter.protocol.jms.sampler.PublisherSampler;
 import org.apache.jmeter.protocol.jms.sampler.SubscriberSampler;
 import org.apache.jmeter.protocol.jms.sampler.JMSSampler;
@@ -36,7 +38,7 @@ public class JMeterTestFromCode {
         JMeterUtils.loadJMeterProperties("src/main/resources/jmeter.properties");
 
 
-        HashTree hashTree = new HashTree();
+
 
 //        // HTTP Sampler
 //        HTTPSampler httpSampler = new HTTPSampler();
@@ -51,10 +53,13 @@ public class JMeterTestFromCode {
 //        ((LoopController)loopCtrl).addTestElement(httpSampler);
         ((LoopController)loopCtrl).setFirst(true);
 
+
+
+
         // Thread Group
-        SetupThreadGroup threadGroup = new SetupThreadGroup();
-        threadGroup.setNumThreads(5);
-        threadGroup.setRampUp(0);
+
+
+
 
         SubscriberSampler subs = new SubscriberSampler();
         subs.setName("Sample Subscriber");
@@ -64,6 +69,13 @@ public class JMeterTestFromCode {
         subs.setDestination(Config.QUEUE_NAME);
         subs.setUsername(Config.USERNAME);
         subs.setPassword(Config.PASSWORD);
+
+        loopCtrl.addTestElement(subs);
+
+        SetupThreadGroup threadGroup = new SetupThreadGroup();
+        threadGroup.setNumThreads(5);
+        threadGroup.setRampUp(0);
+        threadGroup.addTestElement(loopCtrl);
 
 
         PublisherSampler publisher = new PublisherSampler();
@@ -84,6 +96,7 @@ public class JMeterTestFromCode {
         Arguments args = new Arguments();
         args.addArgument("queue.Q.REQ","Example test A");
         args.addArgument("queue.Q.REQ","Example test B");
+//        ThreadGroup
 
         p2PSampler.setJNDIProperties(args);
         p2PSampler.setUseReqMsgIdAsCorrelId(true);
@@ -142,29 +155,37 @@ public class JMeterTestFromCode {
 //        };
 
 
+//        Publisher pub =  new Publisher();
+//        pub.publish("Hello from ", String destinationName, Map<String,Object> properties, int        deliveryMode, int priority, long expiration);
+//
+//        ClientPool clientPool = new ClientPool();
 //        threadGroup.setSamplerController((LoopController)loopCtrl);
 
         // Test plan
         TestPlan testPlan = new TestPlan("MY TEST PLAN");
-        testPlan.addThreadGroup(threadGroup);
+//        testPlan.addThreadGroup(threadGroup);
 //        testPlan.
 //      testPlan.add
+
+
+
+        HashTree hashTree = new HashTree();
         hashTree.add("testPlan", testPlan);
-        hashTree.add("loopCtrl", loopCtrl);
-        hashTree.add("threadGroup", threadGroup);
-        hashTree.add("publisher", publisher);
-        hashTree.add("subs", subs);
-//        hashTree.add("httpSampler", httpSampler);
-        hashTree.add("P2Psampler", p2PSampler);
+//        hashTree.add("loopCtrl", loopCtrl);
+//        hashTree.add("threadGroup", threadGroup);
+//        hashTree.add("publisher", publisher);
+//        hashTree.add("subs", subs);
+////        hashTree.add("httpSampler", httpSampler);
+//        hashTree.add("P2Psampler", p2PSampler);
+
 
         jm.configure(hashTree);
         System.out.println("starts running test");
 
-
-        try {
+//        try {
             jm.run();
-        }catch(Exception e){
-            System.out.println(e);
-        }
+//        }catch(Exception e){
+//            System.out.println(e);
+//        }
     }
 }

@@ -204,6 +204,7 @@
     <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_components:3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_component:3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_http:3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_jms:3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jmeter:jorphan:3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.jmeter:ApacheJMeter_jms:3.3" level="project" />
   </component>

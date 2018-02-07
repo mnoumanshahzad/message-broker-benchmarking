@@ -1,6 +1,8 @@
 package de.tuberlin.mqbenchmark;
 
+import de.tuberlin.mqbenchmark.configuration.Configuration;
 import de.tuberlin.mqbenchmark.consumer.Consumer;
+import de.tuberlin.mqbenchmark.monitoring.Experimental;
 import de.tuberlin.mqbenchmark.monitoring.Monitoring;
 import de.tuberlin.mqbenchmark.producer.Producer;
 
@@ -15,26 +17,25 @@ public class App {
 
     public static void main(String[] args) {
 
-        runTasks();
-        (new Monitoring()).run();
-        /*System.out.println("EpochMilli: " + Instant.now().toEpochMilli());
-        System.out.println("Nano:       " + (Instant.now().getNano()));
-        System.out.println("Nano:       " + (((long)Instant.now().getNano()) / 1000));
-        System.out.println("InstantNow: " + Instant.now());*/
-        //System.out.println("Nano:    " + System.nanoTime());
+        Benchmark benchmark = new Benchmark(args);
+        benchmark.execute();
+
+        //System.out.println(Long.toString(System.currentTimeMillis()).length());
+
+        //runTasks();
+        //(new Monitoring()).run();
+        //(new Experimental()).run();
 
     }
 
     private static void runTasks() {
+
+        Configuration configuration = new Configuration();
+
         List<Runnable> tasks = new ArrayList<>();
-        //tasks.add(new Producer());
-        tasks.add(new Producer());
-        tasks.add(new Producer());
-        tasks.add(new Producer());
-        tasks.add(new Producer());
-        //tasks.add(new Consumer());
-        tasks.add(new Consumer());
-        tasks.add(new Consumer());
+
+        tasks.addAll(Producer.generateProducers(configuration));
+        tasks.addAll(Consumer.generateConsumers(configuration));
 
         tasks.stream().forEach(Runnable::run);
     }

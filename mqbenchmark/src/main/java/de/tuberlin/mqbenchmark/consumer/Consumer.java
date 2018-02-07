@@ -1,12 +1,18 @@
 package de.tuberlin.mqbenchmark.consumer;
 
-import de.tuberlin.mqbenchmark.Config;
+import de.tuberlin.mqbenchmark.configuration.Configuration;
+import de.tuberlin.mqbenchmark.message.MyActiveMQTextMessage;
 import de.tuberlin.mqbenchmark.monitoring.ReceivedMessageQueue;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQTextMessage;
 
 import javax.jms.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Consumer implements Runnable {
+
+    private static Configuration config;
 
     private ActiveMQConnectionFactory connectionFactory;
     private Connection connection;
@@ -16,15 +22,15 @@ public class Consumer implements Runnable {
     private MessageConsumer consumer;
 
     /**
-     * Default constructor bootstraps the necessary objects
+     * Constructor bootstraps the necessary objects
      */
-    public Consumer() {
+    public Consumer(String destinationName) {
 
         try {
             //Creates an ActiveMQ connection factory
-            connectionFactory = new ActiveMQConnectionFactory(Config.CONNECTION_STRING);
-            connectionFactory.setUserName(Config.USERNAME);
-            connectionFactory.setPassword(Config.PASSWORD);
+            connectionFactory = new ActiveMQConnectionFactory(config.getConnetionUrl());
+            connectionFactory.setUserName(config.getUsername());
+            connectionFactory.setPassword(config.getPassword());
 
             //Creates a new connection
             connection = connectionFactory.createConnection();
@@ -34,7 +40,7 @@ public class Consumer implements Runnable {
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             //Creates a consumer for the appropriate message channel
-            consumer = createConsumer();
+            consumer = createConsumer(destinationName);
 
         } catch (JMSException e) { e.printStackTrace(); }
 
@@ -51,13 +57,20 @@ public class Consumer implements Runnable {
 
         try{
 
-            Message message;
+            ActiveMQTextMessage message;
 
-            while((message = nextMessage()) != null) {
-                //Thread.sleep(2);
+            //MyActiveMQTextMessage message_;
+
+            /*while((message = nextMessage()) != null) {
                 ReceivedMessageQueue.recievedMessageQueue.put(message);
-            }
+            }*/
 
+            while ((message = (ActiveMQTextMessage) consumer.receive(config.getConsumerMaxTimeout())) != null) {
+                ReceivedMessageQueue.recievedMessages.put(
+                        new MyActiveMQTextMessage(message,
+                                Long.parseLong(message.getText().split(",")[0]),
+                                System.currentTimeMillis()));
+            }
             close();
 
         } catch (JMSException e) {
@@ -65,7 +78,6 @@ public class Consumer implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -78,30 +90,41 @@ public class Consumer implements Runnable {
     }
 
     /**
-     * Sets the appropriate channel type as defined in the Config
+     * Sets the appropriate channel type as defined in the Configuration
      */
-    private MessageConsumer createConsumer() throws  JMSException{
+    private MessageConsumer createConsumer(String destinationName) throws  JMSException{
 
-        if (Config.CHANNEL_TYPE == 0) {
-            destination = session.createQueue(Config.DESTINATION);
+        if (config.getChannelType() == 0) {
+            destination = session.createQueue(destinationName);
             return session.createConsumer(destination);
         }
-        else if (Config.CHANNEL_TYPE == 1) {
-            topic = session.createTopic(Config.DESTINATION);
+        else if (config.getChannelType() == 1) {
+            topic = session.createTopic(destinationName);
             return session.createConsumer(topic);
         }
         else throw new RuntimeException("Invalid Channel Type");
     }
 
     private Message nextMessage() throws JMSException {
-
-        long currentTime = System.currentTimeMillis();
-        Message message = consumer.receive(Config.CONSUMER_MAX_TIMEOUT);
+        Message message = consumer.receive(config.getConsumerMaxTimeout());
 
         if (message != null) {
-            //message.setLongProperty("arivalTime", currentTime);
             return message;
         }
         else return null;
+    }
+
+    public static List<Runnable> generateConsumers(Configuration configuration) {
+
+        config = configuration;
+
+        List<Runnable> consumerList = new ArrayList<>();
+
+        for (String destinationName: config.getDestinationList()) {
+            for (int i = 0; i < config.getNumberOfConsumersPerDestination(); i++) {
+                consumerList.add(new Consumer(destinationName));
+            }
+        }
+        return consumerList;
     }
 }

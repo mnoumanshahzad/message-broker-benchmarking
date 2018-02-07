@@ -33,16 +33,15 @@ public class Monitoring implements Runnable {
         try {
             while((message = (ActiveMQTextMessage) ReceivedMessageQueue.recievedMessageQueue.poll(5, TimeUnit.SECONDS)) != null) {
                 numMessages++;
-                System.out.println("Broker In Time: " + message.getBrokerInTime());
                 calculateMetrics(message);
-                printValues();
+                //printValues();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (JMSException e) {
             e.printStackTrace();
         }
-        calculateAverage();
+        calculateAverages();
         printAverages();
     }
 
@@ -57,7 +56,7 @@ public class Monitoring implements Runnable {
         commulativeMessageRetries += messageRetries;
     }
 
-    private void calculateAverage() {
+    private void calculateAverages() {
 
         averageEnqueuedTime = commulativeEnqueueTime / numMessages;
         averageSenderLatency = commulativeSenderLatency / numMessages;

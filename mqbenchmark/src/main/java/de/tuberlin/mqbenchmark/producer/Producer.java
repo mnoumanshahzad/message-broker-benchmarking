@@ -1,11 +1,15 @@
 package de.tuberlin.mqbenchmark.producer;
 
-import de.tuberlin.mqbenchmark.Config;
+import de.tuberlin.mqbenchmark.configuration.Configuration;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Producer implements Runnable {
+
+    private static Configuration config;
 
     private ActiveMQConnectionFactory connectionFactory;
     private Connection connection;
@@ -15,15 +19,15 @@ public class Producer implements Runnable {
     private MessageProducer producer;
 
     /**
-     * Default constructor bootstraps the necessary objects
+     * Constructor bootstraps the necessary objects
      */
-    public Producer() {
+    public Producer(String destinationName) {
 
         try {
             //Creates an ActiveMQ connection factory
-            connectionFactory = new ActiveMQConnectionFactory(Config.CONNECTION_STRING);
-            connectionFactory.setUserName(Config.USERNAME);
-            connectionFactory.setPassword(Config.PASSWORD);
+            connectionFactory = new ActiveMQConnectionFactory(config.getConnetionUrl());
+            connectionFactory.setUserName(config.getUsername());
+            connectionFactory.setPassword(config.getPassword());
 
             //Creates a new connection
             connection = connectionFactory.createConnection();
@@ -33,7 +37,7 @@ public class Producer implements Runnable {
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             //Create a producer for the appropriate message channel
-            producer = createProducer();
+            producer = createProducer(destinationName);
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
         }
         catch (JMSException e) { e.printStackTrace(); }
@@ -46,7 +50,7 @@ public class Producer implements Runnable {
     public void run() {
 
         try {
-            for (long i = 0; i < Config.MESSAGES_PER_PRODUCER; i++) {
+            for (long i = 0; i < config.getNumberOfMessagesPerProducer(); i++) {
                 producer.send(generateMessage());
             }
 
@@ -64,16 +68,16 @@ public class Producer implements Runnable {
     }
 
     /**
-     * Sets the appropriate channel type as defined in the Config
+     * Sets the appropriate channel type as defined in the Configuration
      */
-    private MessageProducer createProducer() throws JMSException {
+    private MessageProducer createProducer(String destinationName) throws JMSException {
 
-        if (Config.CHANNEL_TYPE == 0) {
-            destination = session.createQueue(Config.DESTINATION);
+        if (config.getChannelType() == 0) {
+            destination = session.createQueue(destinationName);
             return session.createProducer(destination);
         }
-        else if (Config.CHANNEL_TYPE == 1) {
-            topic = session.createTopic(Config.DESTINATION);
+        else if (config.getChannelType() == 1) {
+            topic = session.createTopic(destinationName);
             return session.createProducer(topic);
         }
         else throw new RuntimeException("Invalid Channel Type");
@@ -84,8 +88,34 @@ public class Producer implements Runnable {
      */
     private Message generateMessage() throws JMSException {
 
-        String text = Long.toString(System.currentTimeMillis());
-        TextMessage message = session.createTextMessage(text);
-        return message;
+        StringBuilder message = new StringBuilder();
+
+        int messageSize = config.getMessageSize();
+
+        int randomPayloadSize = (messageSize*1024) - (Long.toString(System.currentTimeMillis()) + ",").length();
+
+        char[] randomPayload = new char[randomPayloadSize];
+
+        String time = Long.toString(System.currentTimeMillis()) + ",";
+
+        message.append(time).append(randomPayload);
+
+        TextMessage textMessage = session.createTextMessage(message.toString());
+        return textMessage;
+    }
+
+    public static List<Runnable> generateProducers(Configuration configuration) {
+
+        config = configuration;
+
+        List<Runnable> producerList = new ArrayList<>();
+
+        for (String destinationName : config.getDestinationList()) {
+            for (int i = 0; i < config.getProducersPerDestination(); i++) {
+                producerList.add(new Producer(destinationName));
+            }
+        }
+
+        return producerList;
     }
 }
